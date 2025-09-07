@@ -5,12 +5,11 @@ A modern, responsive blog website for technical writings with categorized conten
 ## Features
 
 - **Clean, Modern Design**: White background with professional styling
-- **Categorized Blog Posts**: Five main categories:
-  - 💻 Development
+- **Categorized Blog Posts**: Four main categories:
   - 🏗️ System Design  
-  - ☁️ Azure Cloud
-  - 🔧 Error Solving
+  - 🔗 Azure Integration
   - ⚙️ Admin Center
+  - 🚀 MVP Journey
 - **Interactive Popup Interface**: Easy-to-use blog writing interface
 - **File-based Organization**: Each category has its own folder
 - **Local Storage**: Blogs are saved locally in your browser
@@ -28,11 +27,10 @@ A modern, responsive blog website for technical writings with categorized conten
 
 ```
 ├── index.html              # Main website file
-├── dev/                    # Development blog posts
 ├── system-design/          # System design blog posts
-├── azure-cloud/           # Azure cloud blog posts
-├── error-solving/         # Error solving blog posts
+├── azure-integration/      # Azure integration blog posts
 ├── admin/                 # Admin center blog posts
+├── mvp-journey/           # MVP journey blog posts
 └── README.md              # This file
 ```
 

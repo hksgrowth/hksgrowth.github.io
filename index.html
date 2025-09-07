@@ -265,28 +265,16 @@
         </header>
 
         <div class="categories-grid">
-            <div class="category-card" onclick="openPopup('dev')">
-                <div class="category-icon">💻</div>
-                <div class="category-title">Development</div>
-                <div class="category-description">Programming, coding tips, and development insights</div>
-            </div>
-
             <div class="category-card" onclick="openPopup('system-design')">
                 <div class="category-icon">🏗️</div>
                 <div class="category-title">System Design</div>
                 <div class="category-description">Architecture patterns, scalability, and system design principles</div>
             </div>
 
-            <div class="category-card" onclick="openPopup('azure-cloud')">
-                <div class="category-icon">☁️</div>
-                <div class="category-title">Azure Cloud</div>
-                <div class="category-description">Cloud services, deployment, and Azure best practices</div>
-            </div>
-
-            <div class="category-card" onclick="openPopup('error-solving')">
-                <div class="category-icon">🔧</div>
-                <div class="category-title">Error Solving</div>
-                <div class="category-description">Troubleshooting, debugging, and problem-solving techniques</div>
+            <div class="category-card" onclick="openPopup('azure-integration')">
+                <div class="category-icon">🔗</div>
+                <div class="category-title">Azure Integration</div>
+                <div class="category-description">Azure APIs, Logic Apps, Service Bus, and integration solutions</div>
             </div>
 
             <div class="category-card" onclick="openPopup('admin')">
@@ -294,34 +282,15 @@
                 <div class="category-title">Admin Center</div>
                 <div class="category-description">M365, Azure, Intune, and enterprise admin solutions</div>
             </div>
+
+            <div class="category-card" onclick="openPopup('mvp-journey')">
+                <div class="category-icon">🚀</div>
+                <div class="category-title">MVP Journey</div>
+                <div class="category-description">Minimum Viable Product development, strategy, and lessons learned</div>
+            </div>
         </div>
     </div>
 
-    <!-- Development Popup -->
-    <div id="dev-popup" class="popup-overlay">
-        <div class="popup-content">
-            <div class="popup-header">
-                <h2 class="popup-title">💻 Development Blog</h2>
-                <button class="close-btn" onclick="closePopup('dev')">&times;</button>
-            </div>
-            <div class="blog-editor">
-                <div class="form-group">
-                    <label for="dev-title">Blog Title:</label>
-                    <input type="text" id="dev-title" placeholder="Enter your blog title...">
-                </div>
-                <div class="form-group">
-                    <label for="dev-content">Blog Content:</label>
-                    <textarea id="dev-content" placeholder="Write your blog content here..."></textarea>
-                </div>
-                <button class="btn" onclick="saveBlog('dev')">Save Blog</button>
-                <button class="btn btn-secondary" onclick="clearForm('dev')">Clear</button>
-            </div>
-            <div class="existing-blogs">
-                <h3>Existing Blogs</h3>
-                <ul id="dev-blog-list" class="blog-list"></ul>
-            </div>
-        </div>
-    </div>
 
     <!-- System Design Popup -->
     <div id="system-design-popup" class="popup-overlay">
@@ -349,54 +318,54 @@
         </div>
     </div>
 
-    <!-- Azure Cloud Popup -->
-    <div id="azure-cloud-popup" class="popup-overlay">
+    <!-- Azure Integration Popup -->
+    <div id="azure-integration-popup" class="popup-overlay">
         <div class="popup-content">
             <div class="popup-header">
-                <h2 class="popup-title">☁️ Azure Cloud Blog</h2>
-                <button class="close-btn" onclick="closePopup('azure-cloud')">&times;</button>
+                <h2 class="popup-title">🔗 Azure Integration Blog</h2>
+                <button class="close-btn" onclick="closePopup('azure-integration')">&times;</button>
             </div>
             <div class="blog-editor">
                 <div class="form-group">
-                    <label for="azure-cloud-title">Blog Title:</label>
-                    <input type="text" id="azure-cloud-title" placeholder="Enter your blog title...">
+                    <label for="azure-integration-title">Blog Title:</label>
+                    <input type="text" id="azure-integration-title" placeholder="Enter your blog title...">
                 </div>
                 <div class="form-group">
-                    <label for="azure-cloud-content">Blog Content:</label>
-                    <textarea id="azure-cloud-content" placeholder="Write your blog content here..."></textarea>
+                    <label for="azure-integration-content">Blog Content:</label>
+                    <textarea id="azure-integration-content" placeholder="Write your blog content here..."></textarea>
                 </div>
-                <button class="btn" onclick="saveBlog('azure-cloud')">Save Blog</button>
-                <button class="btn btn-secondary" onclick="clearForm('azure-cloud')">Clear</button>
+                <button class="btn" onclick="saveBlog('azure-integration')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('azure-integration')">Clear</button>
             </div>
             <div class="existing-blogs">
                 <h3>Existing Blogs</h3>
-                <ul id="azure-cloud-blog-list" class="blog-list"></ul>
+                <ul id="azure-integration-blog-list" class="blog-list"></ul>
             </div>
         </div>
     </div>
 
-    <!-- Error Solving Popup -->
-    <div id="error-solving-popup" class="popup-overlay">
+    <!-- MVP Journey Popup -->
+    <div id="mvp-journey-popup" class="popup-overlay">
         <div class="popup-content">
             <div class="popup-header">
-                <h2 class="popup-title">🔧 Error Solving Blog</h2>
-                <button class="close-btn" onclick="closePopup('error-solving')">&times;</button>
+                <h2 class="popup-title">🚀 MVP Journey Blog</h2>
+                <button class="close-btn" onclick="closePopup('mvp-journey')">&times;</button>
             </div>
             <div class="blog-editor">
                 <div class="form-group">
-                    <label for="error-solving-title">Blog Title:</label>
-                    <input type="text" id="error-solving-title" placeholder="Enter your blog title...">
+                    <label for="mvp-journey-title">Blog Title:</label>
+                    <input type="text" id="mvp-journey-title" placeholder="Enter your blog title...">
                 </div>
                 <div class="form-group">
-                    <label for="error-solving-content">Blog Content:</label>
-                    <textarea id="error-solving-content" placeholder="Write your blog content here..."></textarea>
+                    <label for="mvp-journey-content">Blog Content:</label>
+                    <textarea id="mvp-journey-content" placeholder="Write your blog content here..."></textarea>
                 </div>
-                <button class="btn" onclick="saveBlog('error-solving')">Save Blog</button>
-                <button class="btn btn-secondary" onclick="clearForm('error-solving')">Clear</button>
+                <button class="btn" onclick="saveBlog('mvp-journey')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('mvp-journey')">Clear</button>
             </div>
             <div class="existing-blogs">
                 <h3>Existing Blogs</h3>
-                <ul id="error-solving-blog-list" class="blog-list"></ul>
+                <ul id="mvp-journey-blog-list" class="blog-list"></ul>
             </div>
         </div>
     </div>
@@ -430,11 +399,10 @@
     <script>
         // Blog data storage
         let blogs = {
-            'dev': [],
             'system-design': [],
-            'azure-cloud': [],
-            'error-solving': [],
-            'admin': []
+            'azure-integration': [],
+            'admin': [],
+            'mvp-journey': []
         };
 
         // Load blogs from localStorage on page load
