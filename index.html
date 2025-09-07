@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HK's Perspective - Technical Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .category-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            border-color: #3498db;
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .category-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .popup-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+        }
+
+        .blog-editor {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .existing-blogs {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .blog-list {
+            list-style: none;
+        }
+
+        .blog-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .blog-item:hover {
+            background: #e9ecef;
+        }
+
+        .blog-title {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .blog-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HK's Perspective</h1>
+            <p class="subtitle">Technical Blog & Knowledge Sharing</p>
+        </header>
+
+        <div class="categories-grid">
+            <div class="category-card" onclick="openPopup('dev')">
+                <div class="category-icon">💻</div>
+                <div class="category-title">Development</div>
+                <div class="category-description">Programming, coding tips, and development insights</div>
+            </div>
+
+            <div class="category-card" onclick="openPopup('system-design')">
+                <div class="category-icon">🏗️</div>
+                <div class="category-title">System Design</div>
+                <div class="category-description">Architecture patterns, scalability, and system design principles</div>
+            </div>
+
+            <div class="category-card" onclick="openPopup('azure-cloud')">
+                <div class="category-icon">☁️</div>
+                <div class="category-title">Azure Cloud</div>
+                <div class="category-description">Cloud services, deployment, and Azure best practices</div>
+            </div>
+
+            <div class="category-card" onclick="openPopup('error-solving')">
+                <div class="category-icon">🔧</div>
+                <div class="category-title">Error Solving</div>
+                <div class="category-description">Troubleshooting, debugging, and problem-solving techniques</div>
+            </div>
+
+            <div class="category-card" onclick="openPopup('admin')">
+                <div class="category-icon">⚙️</div>
+                <div class="category-title">Admin Center</div>
+                <div class="category-description">M365, Azure, Intune, and enterprise admin solutions</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Development Popup -->
+    <div id="dev-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 class="popup-title">💻 Development Blog</h2>
+                <button class="close-btn" onclick="closePopup('dev')">&times;</button>
+            </div>
+            <div class="blog-editor">
+                <div class="form-group">
+                    <label for="dev-title">Blog Title:</label>
+                    <input type="text" id="dev-title" placeholder="Enter your blog title...">
+                </div>
+                <div class="form-group">
+                    <label for="dev-content">Blog Content:</label>
+                    <textarea id="dev-content" placeholder="Write your blog content here..."></textarea>
+                </div>
+                <button class="btn" onclick="saveBlog('dev')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('dev')">Clear</button>
+            </div>
+            <div class="existing-blogs">
+                <h3>Existing Blogs</h3>
+                <ul id="dev-blog-list" class="blog-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Design Popup -->
+    <div id="system-design-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 class="popup-title">🏗️ System Design Blog</h2>
+                <button class="close-btn" onclick="closePopup('system-design')">&times;</button>
+            </div>
+            <div class="blog-editor">
+                <div class="form-group">
+                    <label for="system-design-title">Blog Title:</label>
+                    <input type="text" id="system-design-title" placeholder="Enter your blog title...">
+                </div>
+                <div class="form-group">
+                    <label for="system-design-content">Blog Content:</label>
+                    <textarea id="system-design-content" placeholder="Write your blog content here..."></textarea>
+                </div>
+                <button class="btn" onclick="saveBlog('system-design')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('system-design')">Clear</button>
+            </div>
+            <div class="existing-blogs">
+                <h3>Existing Blogs</h3>
+                <ul id="system-design-blog-list" class="blog-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Azure Cloud Popup -->
+    <div id="azure-cloud-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 class="popup-title">☁️ Azure Cloud Blog</h2>
+                <button class="close-btn" onclick="closePopup('azure-cloud')">&times;</button>
+            </div>
+            <div class="blog-editor">
+                <div class="form-group">
+                    <label for="azure-cloud-title">Blog Title:</label>
+                    <input type="text" id="azure-cloud-title" placeholder="Enter your blog title...">
+                </div>
+                <div class="form-group">
+                    <label for="azure-cloud-content">Blog Content:</label>
+                    <textarea id="azure-cloud-content" placeholder="Write your blog content here..."></textarea>
+                </div>
+                <button class="btn" onclick="saveBlog('azure-cloud')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('azure-cloud')">Clear</button>
+            </div>
+            <div class="existing-blogs">
+                <h3>Existing Blogs</h3>
+                <ul id="azure-cloud-blog-list" class="blog-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Solving Popup -->
+    <div id="error-solving-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 class="popup-title">🔧 Error Solving Blog</h2>
+                <button class="close-btn" onclick="closePopup('error-solving')">&times;</button>
+            </div>
+            <div class="blog-editor">
+                <div class="form-group">
+                    <label for="error-solving-title">Blog Title:</label>
+                    <input type="text" id="error-solving-title" placeholder="Enter your blog title...">
+                </div>
+                <div class="form-group">
+                    <label for="error-solving-content">Blog Content:</label>
+                    <textarea id="error-solving-content" placeholder="Write your blog content here..."></textarea>
+                </div>
+                <button class="btn" onclick="saveBlog('error-solving')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('error-solving')">Clear</button>
+            </div>
+            <div class="existing-blogs">
+                <h3>Existing Blogs</h3>
+                <ul id="error-solving-blog-list" class="blog-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Center Popup -->
+    <div id="admin-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 class="popup-title">⚙️ Admin Center Blog</h2>
+                <button class="close-btn" onclick="closePopup('admin')">&times;</button>
+            </div>
+            <div class="blog-editor">
+                <div class="form-group">
+                    <label for="admin-title">Blog Title:</label>
+                    <input type="text" id="admin-title" placeholder="Enter your blog title...">
+                </div>
+                <div class="form-group">
+                    <label for="admin-content">Blog Content:</label>
+                    <textarea id="admin-content" placeholder="Write your blog content here..."></textarea>
+                </div>
+                <button class="btn" onclick="saveBlog('admin')">Save Blog</button>
+                <button class="btn btn-secondary" onclick="clearForm('admin')">Clear</button>
+            </div>
+            <div class="existing-blogs">
+                <h3>Existing Blogs</h3>
+                <ul id="admin-blog-list" class="blog-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Blog data storage
+        let blogs = {
+            'dev': [],
+            'system-design': [],
+            'azure-cloud': [],
+            'error-solving': [],
+            'admin': []
+        };
+
+        // Load blogs from localStorage on page load
+        function loadBlogs() {
+            const savedBlogs = localStorage.getItem('hks-perspective-blogs');
+            if (savedBlogs) {
+                blogs = JSON.parse(savedBlogs);
+                updateBlogLists();
+            }
+        }
+
+        // Save blogs to localStorage
+        function saveBlogs() {
+            localStorage.setItem('hks-perspective-blogs', JSON.stringify(blogs));
+        }
+
+        // Open popup
+        function openPopup(category) {
+            document.getElementById(category + '-popup').style.display = 'block';
+            updateBlogList(category);
+        }
+
+        // Close popup
+        function closePopup(category) {
+            document.getElementById(category + '-popup').style.display = 'none';
+        }
+
+        // Save blog
+        function saveBlog(category) {
+            const title = document.getElementById(category + '-title').value.trim();
+            const content = document.getElementById(category + '-content').value.trim();
+
+            if (!title || !content) {
+                alert('Please fill in both title and content!');
+                return;
+            }
+
+            const blog = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString(),
+                category: category
+            };
+
+            blogs[category].push(blog);
+            saveBlogs();
+            updateBlogList(category);
+            clearForm(category);
+            alert('Blog saved successfully!');
+        }
+
+        // Clear form
+        function clearForm(category) {
+            document.getElementById(category + '-title').value = '';
+            document.getElementById(category + '-content').value = '';
+        }
+
+        // Update blog list for specific category
+        function updateBlogList(category) {
+            const blogList = document.getElementById(category + '-blog-list');
+            blogList.innerHTML = '';
+
+            if (blogs[category].length === 0) {
+                blogList.innerHTML = '<li style="text-align: center; color: #7f8c8d; padding: 20px;">No blogs yet. Start writing!</li>';
+                return;
+            }
+
+            blogs[category].forEach(blog => {
+                const li = document.createElement('li');
+                li.className = 'blog-item';
+                li.innerHTML = `
+                    <div>
+                        <div class="blog-title">${blog.title}</div>
+                        <div style="font-size: 0.8rem; color: #7f8c8d;">Created: ${blog.date}</div>
+                    </div>
+                    <div class="blog-actions">
+                        <button class="btn btn-small btn-success" onclick="viewBlog('${category}', ${blog.id})">View</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteBlog('${category}', ${blog.id})">Delete</button>
+                    </div>
+                `;
+                blogList.appendChild(li);
+            });
+        }
+
+        // Update all blog lists
+        function updateBlogLists() {
+            Object.keys(blogs).forEach(category => {
+                updateBlogList(category);
+            });
+        }
+
+        // View blog
+        function viewBlog(category, blogId) {
+            const blog = blogs[category].find(b => b.id === blogId);
+            if (blog) {
+                document.getElementById(category + '-title').value = blog.title;
+                document.getElementById(category + '-content').value = blog.content;
+            }
+        }
+
+        // Delete blog
+        function deleteBlog(category, blogId) {
+            if (confirm('Are you sure you want to delete this blog?')) {
+                blogs[category] = blogs[category].filter(b => b.id !== blogId);
+                saveBlogs();
+                updateBlogList(category);
+            }
+        }
+
+        // Close popup when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('popup-overlay')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Load blogs when page loads
+        window.onload = loadBlogs;
+    </script>
+</body>
+</html>
