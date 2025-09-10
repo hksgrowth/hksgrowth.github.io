@@ -11,6 +11,11 @@
 
     <div class="container">
         <header class="profile-header">
+            <div class="theme-switcher">
+                <button id="theme-toggle" class="theme-btn" aria-label="Toggle theme">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
             <div class="profile-picture">
                 <img src="profile.jpg" alt="HK's Profile Picture">
             </div>
@@ -106,6 +111,11 @@
                     <label for="azure-integration-content">Blog Content:</label>
                     <textarea id="azure-integration-content" placeholder="Write your blog content here..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="azure-integration-image">Featured Image (optional):</label>
+                    <input type="file" id="azure-integration-image" accept="image/*" onchange="previewImage('azure-integration-image', 'azure-integration-image-preview')">
+                    <div id="azure-integration-image-preview" class="image-preview"></div>
+                </div>
                 <button class="btn" onclick="saveBlog('azure-integration')">Save Blog</button>
                 <button class="btn btn-secondary" onclick="clearForm('azure-integration')">Clear</button>
             </div>
@@ -132,6 +142,11 @@
                     <label for="mvp-journey-content">Blog Content:</label>
                     <textarea id="mvp-journey-content" placeholder="Write your blog content here..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="mvp-journey-image">Featured Image (optional):</label>
+                    <input type="file" id="mvp-journey-image" accept="image/*" onchange="previewImage('mvp-journey-image', 'mvp-journey-image-preview')">
+                    <div id="mvp-journey-image-preview" class="image-preview"></div>
+                </div>
                 <button class="btn" onclick="saveBlog('mvp-journey')">Save Blog</button>
                 <button class="btn btn-secondary" onclick="clearForm('mvp-journey')">Clear</button>
             </div>
@@ -157,6 +172,11 @@
                 <div class="form-group">
                     <label for="admin-content">Blog Content:</label>
                     <textarea id="admin-content" placeholder="Write your blog content here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="admin-image">Featured Image (optional):</label>
+                    <input type="file" id="admin-image" accept="image/*" onchange="previewImage('admin-image', 'admin-image-preview')">
+                    <div id="admin-image-preview" class="image-preview"></div>
                 </div>
                 <button class="btn" onclick="saveBlog('admin')">Save Blog</button>
                 <button class="btn btn-secondary" onclick="clearForm('admin')">Clear</button>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post - HK's Perspective</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="blog-header">
+            <div class="back-button">
+                <a href="index.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Blog
+                </a>
+            </div>
+            <div class="theme-switcher">
+                <button id="theme-toggle" class="theme-btn" aria-label="Toggle theme">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+            <div class="blog-meta">
+                <h1 id="blog-title">Loading...</h1>
+                <div class="blog-info">
+                    <span id="blog-date"></span>
+                    <span id="blog-category"></span>
+                </div>
+            </div>
+        </header>
+
+        <main class="blog-content">
+            <article id="blog-article">
+                <div class="blog-body" id="blog-body">
+                    Loading content...
+                </div>
+                
+                <div class="blog-actions">
+                    <button class="btn btn-primary" onclick="editBlog()">
+                        <i class="fas fa-edit"></i> Edit Post
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteBlog()">
+                        <i class="fas fa-trash"></i> Delete Post
+                    </button>
+                </div>
+
+                <div class="comments-section">
+                    <h3>Comments</h3>
+                    <div class="comment-form">
+                        <textarea id="new-comment" placeholder="Write your comment..." rows="3"></textarea>
+                        <button class="btn" onclick="addComment()">Add Comment</button>
+                    </div>
+                    <div class="comments-list" id="comments-list">
+                        <p class="no-comments">No comments yet. Be the first to comment!</p>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <script src="blog-view.js"></script>
+</body>
+</html>
+
