@@ -1,5 +1,4 @@
-# Configuration files (keep private)
-config.js
+# Environment files (keep private)
 .env
 .env.local
 .env.production
