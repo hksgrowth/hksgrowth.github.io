@@ -15,6 +15,204 @@ function loadBlogs() {
     if (savedBlogs) {
         blogs = JSON.parse(savedBlogs);
         updateBlogLists();
+    } else {
+        // Initialize with the Azure Conditional Access blog post
+        blogs = {
+            'system-design': [],
+            'azure-integration': [
+                {
+                    id: Date.now(),
+                    title: "Extending M365 Security: How Azure Conditional Access Protects Your Entire Cloud Infrastructure",
+                    content: `# Extending M365 Security: How Azure Conditional Access Protects Your Entire Cloud Infrastructure
+
+In my previous post on [M365 Security Best Practices](), we explored the foundational security measures that protect your Microsoft 365 environment. Today, we're taking that security foundation and extending it across your entire cloud infrastructure using Azure Conditional Access—the unified security gatekeeper that brings Zero Trust principles to both M365 and Azure services.
+
+## The Problem: Fragmented Cloud Security
+
+Modern organizations face a critical challenge: as they adopt cloud services, their security posture often becomes fragmented. You might have robust M365 security policies, but what about your Azure VMs, storage accounts, or web applications? Traditional perimeter-based security models fall short in a world where users access resources from anywhere, on any device.
+
+**The reality:** A single compromised credential can provide access to your entire cloud estate if not properly protected.
+
+## What is Azure Conditional Access?
+
+Azure Conditional Access is Microsoft's cloud-based access control solution that uses IF-THEN statements to enforce security policies. Think of it as a smart security guard that evaluates every access request based on:
+
+- **Who** is trying to access (user identity)
+- **What** they're trying to access (cloud app or resource)
+- **Where** they're accessing from (location)
+- **When** they're accessing (time-based policies)
+- **How** they're accessing (device compliance, risk level)
+
+## The Power of Conditional Access: Beyond M365
+
+While Conditional Access policies can protect M365 services, their true power lies in extending security across your entire Azure ecosystem:
+
+### Protecting Azure Resources
+- **Virtual Machines:** Require MFA for RDP/SSH access to production VMs
+- **Storage Accounts:** Block access from untrusted locations to sensitive data
+- **Web Applications:** Enforce device compliance for internal applications
+- **Azure SQL Databases:** Require hybrid Azure AD join for database access
+
+### Real-World Scenarios
+
+**Scenario 1: Production VM Access**
+\`\`\`
+IF user is accessing Azure VM
+AND location is not "Trusted Corporate Network"
+THEN require MFA + device compliance
+\`\`\`
+
+**Scenario 2: Sensitive Data Protection**
+\`\`\`
+IF user is accessing Storage Account with "confidential" tag
+AND device is not compliant
+THEN block access
+\`\`\`
+
+## Essential Conditional Access Policies for Unified Security
+
+### 1. Require MFA for All Users (High-Risk Scenarios)
+**Policy Name:** "Require MFA for High-Risk Sign-ins"
+- **Users:** All users
+- **Cloud Apps:** All cloud apps
+- **Conditions:** Sign-in risk = Medium or High
+- **Access Controls:** Require MFA
+
+### 2. Block Legacy Authentication
+**Policy Name:** "Block Legacy Auth Protocols"
+- **Users:** All users
+- **Cloud Apps:** All cloud apps
+- **Client Apps:** Exchange ActiveSync, Other clients
+- **Access Controls:** Block
+
+### 3. Require Device Compliance
+**Policy Name:** "Require Compliant Devices for Azure Resources"
+- **Users:** All users
+- **Cloud Apps:** Azure services (VMs, Storage, etc.)
+- **Device State:** Require device to be marked as compliant
+- **Access Controls:** Grant access
+
+### 4. Location-Based Policies
+**Policy Name:** "Block Access from Untrusted Locations"
+- **Users:** All users
+- **Cloud Apps:** All cloud apps
+- **Locations:** Exclude trusted locations
+- **Access Controls:** Block
+
+### 5. High-Risk User Protection
+**Policy Name:** "High-Risk Users - Require MFA"
+- **Users:** High-risk users (from Identity Protection)
+- **Cloud Apps:** All cloud apps
+- **Access Controls:** Require MFA
+
+## Implementation Best Practices
+
+### Start with Report-Only Mode
+Always test your policies in report-only mode first. This allows you to:
+- Monitor policy impact without affecting users
+- Identify potential issues before enforcement
+- Gather data on policy effectiveness
+
+### Emergency Access Accounts
+Create at least two emergency access accounts that are:
+- Excluded from all Conditional Access policies
+- Used only for emergency scenarios
+- Monitored and audited regularly
+
+### Naming Conventions
+Use clear, descriptive names for your policies:
+- \`CA-001-Require-MFA-High-Risk-Users\`
+- \`CA-002-Block-Legacy-Authentication\`
+- \`CA-003-Require-Compliant-Devices-Azure\`
+
+### Policy Hierarchy
+Organize policies by priority:
+1. **Block policies** (highest priority)
+2. **High-risk user policies**
+3. **Location-based policies**
+4. **Device compliance policies**
+5. **MFA requirements**
+
+## Common Challenges and Solutions
+
+### Challenge 1: User Experience Impact
+**Problem:** Users complain about frequent MFA prompts
+**Solution:** 
+- Use trusted locations for corporate networks
+- Implement risk-based policies instead of blanket MFA
+- Communicate changes clearly to users
+
+### Challenge 2: Troubleshooting Access Issues
+**Problem:** Users can't access resources after policy changes
+**Solution:**
+- Use the Conditional Access insights workbook
+- Check the sign-in logs for policy evaluation details
+- Test with report-only mode first
+
+### Challenge 3: Policy Complexity
+**Problem:** Too many policies creating conflicts
+**Solution:**
+- Start with 3-5 essential policies
+- Use groups to target specific user sets
+- Regularly review and consolidate policies
+
+## Quick Wins: Policies You Can Implement Today
+
+### 1. Block Legacy Authentication (5 minutes)
+This single policy can prevent 99% of password spray attacks.
+
+### 2. Require MFA for Admins (10 minutes)
+Protect your most privileged accounts immediately.
+
+### 3. Block Access from High-Risk Countries (15 minutes)
+If you don't have international users, block access from countries you don't operate in.
+
+## Monitoring and Maintenance
+
+### Regular Reviews
+- **Monthly:** Review policy effectiveness and user impact
+- **Quarterly:** Audit emergency access accounts
+- **Annually:** Complete policy review and optimization
+
+### Key Metrics to Track
+- Policy hit rates
+- User experience impact
+- Security incidents prevented
+- False positive rates
+
+## The Zero Trust Advantage
+
+Conditional Access is the cornerstone of a Zero Trust security model because it:
+
+1. **Never Trusts, Always Verifies:** Every access request is evaluated
+2. **Assumes Breach:** Policies protect against compromised credentials
+3. **Uses Least Privilege:** Users only get access they need, when they need it
+4. **Provides Visibility:** Complete audit trail of all access decisions
+
+## Conclusion
+
+Azure Conditional Access transforms your security posture from reactive to proactive. By extending the security principles we established in M365 across your entire Azure infrastructure, you create a unified, intelligent security layer that adapts to threats and protects your most valuable assets.
+
+The journey from fragmented security to unified protection starts with a single policy. Begin with blocking legacy authentication, then gradually build your policy framework. Remember: security is not a destination, but a continuous journey of improvement.
+
+## What's Next?
+
+In our next post, we'll dive deeper into Azure Identity Protection and how it works with Conditional Access to provide intelligent, risk-based security decisions. We'll also explore advanced scenarios like protecting hybrid environments and implementing just-in-time access.
+
+---
+
+**Have you implemented Conditional Access policies in your environment? What challenges have you faced, and what successes can you share? Let me know in the comments below!**
+
+*Ready to take your cloud security to the next level? Start with one policy today and build from there. Your future self (and your security team) will thank you.*`,
+                    date: new Date().toLocaleDateString(),
+                    category: 'azure-integration'
+                }
+            ],
+            'mvp-journey': [],
+            'admin': []
+        };
+        saveBlogs();
+        updateBlogLists();
     }
     
     // Load comments
@@ -65,8 +263,8 @@ async function saveBlog(category) {
 
     let imageFilename = null;
     
-    // Handle image upload if present
-    if (imageInput.files && imageInput.files[0]) {
+    // Handle image upload if present and image input exists
+    if (imageInput && imageInput.files && imageInput.files[0]) {
         try {
             const blogId = window.editingBlogId || Date.now();
             imageFilename = await saveImageToStorage(imageInput.files[0], category, blogId);
@@ -123,8 +321,17 @@ async function saveBlog(category) {
 function clearForm(category) {
     document.getElementById(category + '-title').value = '';
     document.getElementById(category + '-content').value = '';
-    document.getElementById(category + '-image').value = '';
-    document.getElementById(category + '-image-preview').innerHTML = '';
+    
+    // Clear image input and preview if they exist
+    const imageInput = document.getElementById(category + '-image');
+    const imagePreview = document.getElementById(category + '-image-preview');
+    
+    if (imageInput) {
+        imageInput.value = '';
+    }
+    if (imagePreview) {
+        imagePreview.innerHTML = '';
+    }
     
     // Clear editing state
     window.editingBlogId = null;
@@ -370,9 +577,9 @@ function initTheme() {
 
 // Clear localStorage to ensure fresh start
 function clearAllData() {
-    localStorage.removeItem('blogs');
-    localStorage.removeItem('comments');
-    localStorage.removeItem('likes');
+    localStorage.removeItem('hks-perspective-blogs');
+    localStorage.removeItem('hks-perspective-comments');
+    localStorage.removeItem('blog-images');
 }
 
 // Preview uploaded image
@@ -427,17 +634,24 @@ window.onload = function() {
     initTheme();
     loadBlogs();
     
-    // Clean up duplicate blogs (keep only the first one)
+    // Clean up duplicate blogs (keep only the first one) - but only if there are actual duplicates
     Object.keys(blogs).forEach(category => {
         if (blogs[category].length > 1) {
-            // Keep only the first blog, remove duplicates
-            const firstBlog = blogs[category][0];
-            blogs[category] = [firstBlog];
+            // Check if there are actual duplicates (same title)
+            const uniqueBlogs = [];
+            const seenTitles = new Set();
+            
+            blogs[category].forEach(blog => {
+                if (!seenTitles.has(blog.title)) {
+                    seenTitles.add(blog.title);
+                    uniqueBlogs.push(blog);
+                }
+            });
+            
+            blogs[category] = uniqueBlogs;
             saveBlogs();
         }
     });
-    
-    // Don't add any sample blogs - start with empty blog list
     
     // Check if we're editing a blog
     const urlParams = new URLSearchParams(window.location.search);

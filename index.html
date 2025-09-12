@@ -85,6 +85,11 @@
                     <label for="system-design-content">Blog Content:</label>
                     <textarea id="system-design-content" placeholder="Write your blog content here..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="system-design-image">Featured Image (optional):</label>
+                    <input type="file" id="system-design-image" accept="image/*" onchange="previewImage('system-design-image', 'system-design-image-preview')">
+                    <div id="system-design-image-preview" class="image-preview"></div>
+                </div>
                 <button class="btn" onclick="saveBlog('system-design')">Save Blog</button>
                 <button class="btn btn-secondary" onclick="clearForm('system-design')">Clear</button>
             </div>
