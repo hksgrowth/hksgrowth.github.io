@@ -384,8 +384,18 @@ function updateBlogLists() {
 
 // View blog
 function viewBlog(category, blogId) {
-    // Open blog in new page
-    window.open(`blog-view.html?category=${category}&id=${blogId}`, '_blank');
+    // Get the blog data
+    const blog = blogs[category].find(b => b.id === blogId);
+    if (!blog) {
+        alert('Blog not found!');
+        return;
+    }
+    
+    // Encode blog data for URL
+    const blogData = encodeURIComponent(JSON.stringify(blog));
+    
+    // Open blog in new page with embedded data
+    window.open(`blog-view.html?category=${category}&id=${blogId}&data=${blogData}`, '_blank');
 }
 
 // Delete blog

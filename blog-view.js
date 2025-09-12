@@ -8,6 +8,7 @@ function loadBlogFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get('category');
     const blogId = parseInt(urlParams.get('id'));
+    const blogData = urlParams.get('data');
     
     if (!category || !blogId) {
         showError('Blog not found');
@@ -17,15 +18,27 @@ function loadBlogFromURL() {
     currentCategory = category;
     currentBlogId = blogId;
     
-    // Load blogs from localStorage
+    // Try to load blog data from URL first (for sharing)
+    if (blogData) {
+        try {
+            currentBlog = JSON.parse(decodeURIComponent(blogData));
+            displayBlog();
+            loadComments();
+            return;
+        } catch (e) {
+            console.error('Error parsing blog data from URL:', e);
+        }
+    }
+    
+    // Fallback: Load blogs from localStorage (for local editing)
     const savedBlogs = localStorage.getItem('hks-perspective-blogs');
     if (savedBlogs) {
         const blogs = JSON.parse(savedBlogs);
         currentBlog = blogs[category].find(blog => blog.id === blogId);
         
         if (currentBlog) {
-    displayBlog();
-    loadComments();
+            displayBlog();
+            loadComments();
         } else {
             showError('Blog not found');
         }
@@ -174,15 +187,40 @@ function deleteComment(commentId) {
 
 // Edit blog
 function editBlog() {
-    // Redirect to main page with edit parameters
-    window.location.href = `index.html?edit=${currentCategory}&id=${currentBlogId}`;
+    // Check if we have the blog data locally
+    const savedBlogs = localStorage.getItem('hks-perspective-blogs');
+    if (savedBlogs) {
+        const blogs = JSON.parse(savedBlogs);
+        const localBlog = blogs[currentCategory].find(blog => blog.id === currentBlogId);
+        
+        if (localBlog) {
+            // Redirect to main page with edit parameters
+            window.location.href = `index.html?edit=${currentCategory}&id=${currentBlogId}`;
+        } else {
+            alert('This blog post can only be edited from the main blog page where it was created.');
+        }
+    } else {
+        alert('This blog post can only be edited from the main blog page where it was created.');
+    }
 }
 
 // Delete blog
 function deleteBlog() {
+    // Check if we have the blog data locally
+    const savedBlogs = localStorage.getItem('hks-perspective-blogs');
+    if (!savedBlogs) {
+        alert('This blog post can only be deleted from the main blog page where it was created.');
+        return;
+    }
+    
     if (confirm('Are you sure you want to delete this blog post?')) {
-        const savedBlogs = localStorage.getItem('hks-perspective-blogs');
         const blogs = JSON.parse(savedBlogs);
+        const localBlog = blogs[currentCategory].find(blog => blog.id === currentBlogId);
+        
+        if (!localBlog) {
+            alert('This blog post can only be deleted from the main blog page where it was created.');
+            return;
+        }
         
         blogs[currentCategory] = blogs[currentCategory].filter(blog => blog.id !== currentBlogId);
         localStorage.setItem('hks-perspective-blogs', JSON.stringify(blogs));
