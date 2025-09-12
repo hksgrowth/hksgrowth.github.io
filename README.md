@@ -1,110 +1,48 @@
-# HK's Perspective - Technical Blog
+# HK's Perspective Blog
 
-A modern, professional blog website for technical writings with a clean design and categorized content management.
+A personal technical blog with analytics dashboard.
 
-## ✨ Features
+## Setup Instructions
 
-- **Professional Profile Section**: Personal branding with profile photo and social links
-- **Dark Theme Design**: Modern dark background with professional styling
-- **Categorized Blog Posts**: Four main categories in a clean single-row layout:
-  - 🏗️ **System Design** - In-depth guides and patterns
-  - 🔗 **Azure Integration** - Connecting services seamlessly
-  - 🚀 **MVP Journey** - From idea to product launch
-  - ⚙️ **Admin Center** - Management and best practices
-- **Interactive Blog Interface**: Easy-to-use popup interface for writing blogs
-- **Local Storage**: Blogs are saved locally in your browser
-- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- **Social Media Integration**: Twitter, Message, and GitHub links
-- **Hover Effects**: Beautiful card animations and transitions
-
-## 🎨 Design Features
-
-- **Centered Layout**: Everything perfectly centered for professional appearance
-- **Color-Coded Categories**: Each category has a unique colored border
-- **Glassmorphism Effects**: Modern backdrop blur and transparency effects
-- **Smooth Animations**: Hover effects and transitions for better UX
-- **Professional Typography**: Roboto font for clean, readable text
-
-## 🚀 How to Use
-
-1. Open `index.html` in your web browser
-2. View your profile section with social links
-3. Click on any category card to open the blog writing interface
-4. Write your blog title and content
-5. Click "Save Blog" to save your post
-6. View, edit, or delete existing blogs from the list
-7. All blogs are automatically saved in your browser's local storage
-
-## 📁 Project Structure
-
-```
-├── index.html              # Main website file
-├── style.css               # Professional styling and animations
-├── script.js               # Blog functionality and interactions
-├── profile.jpg             # Profile photo
-├── system-design/          # System design blog posts
-├── azure-integration/      # Azure integration blog posts
-├── admin/                  # Admin center blog posts
-├── mvp-journey/           # MVP journey blog posts
-└── README.md              # This file
+### 1. Configuration
+Copy the example configuration file and set your password:
+```bash
+cp config.example.js config.js
 ```
 
-## 🌐 Live Website
+### 2. Edit config.js
+Open `config.js` and set your actual password:
+```javascript
+OWNER_PASSWORD: 'YourSecurePassword123!'
+```
 
-**GitHub Pages URL**: `https://hksgrowth.github.io`
+### 3. Important Notes
+- **`config.js`** is in `.gitignore` and will NOT be committed
+- **`config.example.js`** is safe to commit (template file)
+- **Never commit** `config.js` with your actual password
 
-## 🛠️ Deployment to GitHub Pages
+## Security Features
 
-1. Repository is already set up as `hksgrowth.github.io`
-2. All files are committed and pushed to the main branch
-3. GitHub Pages is enabled and automatically deploys from the main branch
-4. Your blog is live at the GitHub Pages URL
+- Analytics dashboard with owner-only access
+- Multiple authentication methods
+- Visitor tracking and live graphs
+- Secure password management
 
-## 🎯 Social Links
+## Files Structure
 
-- **Twitter**: Main Twitter profile
-- **Message**: Direct messaging option
-- **GitHub**: [https://github.com/hksgrowth](https://github.com/hksgrowth)
+- `index.html` - Main blog page
+- `script.js` - Blog functionality and analytics
+- `style.css` - Styling
+- `config.js` - **PRIVATE** configuration (not committed)
+- `config.example.js` - Template configuration (safe to commit)
 
-## 🎨 Customization
+## Development
 
-- **Profile Photo**: Replace `profile.jpg` with your own photo
-- **Social Links**: Update URLs in `index.html`
-- **Categories**: Modify categories and descriptions in `index.html`
-- **Colors**: Change category colors using CSS custom properties
-- **Styling**: Customize fonts, spacing, and effects in `style.css`
+1. Clone the repository
+2. Copy `config.example.js` to `config.js`
+3. Set your password in `config.js`
+4. Open `index.html` in your browser
 
-## 📱 Browser Compatibility
+## Production
 
-- ✅ Chrome (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ✅ Edge
-- ✅ Mobile browsers
-
-## 🔮 Future Enhancements
-
-- [ ] Markdown support for blog posts
-- [ ] Image uploads for blog content
-- [ ] Search functionality across all blogs
-- [ ] RSS feed for blog updates
-- [ ] Comments system for engagement
-- [ ] Blog post sharing features
-- [ ] Analytics integration
-- [ ] SEO optimization
-
-## 🛡️ Privacy & Data
-
-- All blog data is stored locally in your browser
-- No external data collection or tracking
-- Complete privacy and control over your content
-- Data persists across browser sessions
-
-## 📞 Support
-
-For questions or issues, please contact through the social links provided on the website.
-
----
-
-**Created by HK for technical blog and knowledge sharing**  
-**Live at**: [https://hksgrowth.github.io](https://hksgrowth.github.io)
+For production deployment, ensure `config.js` is properly configured with your production password.

@@ -15,6 +15,9 @@
                 <button id="theme-toggle" class="theme-btn" aria-label="Toggle theme">
                     <i class="fas fa-moon" id="theme-icon"></i>
                 </button>
+                <button class="analytics-btn" onclick="showAnalytics()" aria-label="View Analytics">
+                    <i class="fas fa-chart-bar"></i>
+                </button>
             </div>
             <div class="profile-picture">
                 <img src="profile.jpg" alt="HK's Profile Picture">
@@ -30,7 +33,6 @@
                         <li><strong>System Design:</strong> Crafting resilient and efficient architectures</li>
                         <li><strong>Cloud Architecture:</strong> Leveraging the cloud to its full potential</li>
                         <li><strong>Scalable Solutions:</strong> Building for today with tomorrow in mind</li>
-                        <li><strong>MVP Journey:</strong> From idea to product launch</li>
                     </ul>
                     <p>On this blog, I document my learning journey and share practical insights that you can apply directly to your own projects. Let's learn and build together!</p>
                 </div>
@@ -55,11 +57,6 @@
                 <p class="card-description">Connecting services seamlessly</p>
             </div>
 
-            <div class="card" style="--glow-color: #9b59b6;" onclick="openPopup('mvp-journey')">
-                <div class="card-icon"><i class="fas fa-rocket"></i></div>
-                <h2 class="card-title">MVP Journey</h2>
-                <p class="card-description">From idea to product launch</p>
-            </div>
 
             <div class="card" style="--glow-color: #2ecc71;" onclick="openPopup('admin')">
                 <div class="card-icon"><i class="fas fa-tools"></i></div>
@@ -131,36 +128,6 @@
         </div>
     </div>
 
-    <!-- MVP Journey Popup -->
-    <div id="mvp-journey-popup" class="popup-overlay">
-        <div class="popup-content">
-            <div class="popup-header">
-                <h2 class="popup-title">🚀 MVP Journey Blog</h2>
-                <button class="close-btn" onclick="closePopup('mvp-journey')">&times;</button>
-            </div>
-            <div class="blog-editor">
-                <div class="form-group">
-                    <label for="mvp-journey-title">Blog Title:</label>
-                    <input type="text" id="mvp-journey-title" placeholder="Enter your blog title...">
-                </div>
-                <div class="form-group">
-                    <label for="mvp-journey-content">Blog Content:</label>
-                    <textarea id="mvp-journey-content" placeholder="Write your blog content here..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="mvp-journey-image">Featured Image (optional):</label>
-                    <input type="file" id="mvp-journey-image" accept="image/*" onchange="previewImage('mvp-journey-image', 'mvp-journey-image-preview')">
-                    <div id="mvp-journey-image-preview" class="image-preview"></div>
-                </div>
-                <button class="btn" onclick="saveBlog('mvp-journey')">Save Blog</button>
-                <button class="btn btn-secondary" onclick="clearForm('mvp-journey')">Clear</button>
-            </div>
-            <div class="existing-blogs">
-                <h3>Existing Blogs</h3>
-                <ul id="mvp-journey-blog-list" class="blog-list"></ul>
-            </div>
-        </div>
-    </div>
 
     <!-- Admin Center Popup -->
     <div id="admin-popup" class="popup-overlay">
@@ -194,6 +161,8 @@
     </div>
 
 
+    <!-- Load configuration first -->
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

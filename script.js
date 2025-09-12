@@ -2,12 +2,620 @@
 let blogs = {
     'system-design': [],
     'azure-integration': [],
-    'mvp-journey': [],
     'admin': []
 };
 
 // Comments storage
 let comments = {};
+
+// Analytics storage
+let analytics = {
+    pageViews: 0,
+    blogViews: {},
+    userInteractions: [],
+    sessionStart: new Date().toISOString(),
+    totalSessions: 0,
+    activeVisitors: 0,
+    visitorHistory: [],
+    peakVisitors: 0,
+    currentVisitors: []
+};
+
+// Owner verification settings
+const OWNER_CONFIG = {
+    // Password will be retrieved from environment or use fallback
+    secretKey: "hks-perspective-owner-2025",
+    allowedIPs: [], // Add your IP addresses here if needed
+    sessionTimeout: 30 * 60 * 1000 // 30 minutes
+};
+
+// Get owner password from configuration or use fallback
+function getOwnerPassword() {
+    // Try to get from configuration file first
+    if (typeof window !== 'undefined' && window.BLOG_CONFIG && window.BLOG_CONFIG.OWNER_PASSWORD) {
+        return window.BLOG_CONFIG.OWNER_PASSWORD;
+    }
+    
+    // Fallback to dynamic password if no config
+    return generateOwnerPassword();
+}
+
+// Generate a dynamic password based on current date and secret key
+function generateOwnerPassword() {
+    const today = new Date();
+    const dateString = today.getFullYear() + 
+                      String(today.getMonth() + 1).padStart(2, '0') + 
+                      String(today.getDate()).padStart(2, '0');
+    
+    // Create a simple hash-like password that changes daily
+    const baseString = "HK" + dateString + "Analytics";
+    return baseString;
+}
+
+// Check for owner using multiple secure methods
+function checkForOwnerElement() {
+    // Method 1: Check for a specific URL parameter (only you know)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('owner') === 'hk2025') {
+        return true;
+    }
+    
+    // Method 2: Check for a specific localStorage key (only you know)
+    if (localStorage.getItem('hks-owner-key') === 'verified-2025') {
+        return true;
+    }
+    
+    // Method 3: Check for a specific combination of conditions
+    const currentHour = new Date().getHours();
+    const currentMinute = new Date().getMinutes();
+    // Only works at specific times (you know the pattern)
+    if (currentHour === 9 && currentMinute >= 0 && currentMinute <= 5) {
+        return true;
+    }
+    
+    return false;
+}
+
+// Analytics Functions
+function initAnalytics() {
+    // Load analytics data from localStorage
+    const savedAnalytics = localStorage.getItem('hks-perspective-analytics');
+    if (savedAnalytics) {
+        analytics = JSON.parse(savedAnalytics);
+    }
+    
+    // Track page view
+    analytics.pageViews++;
+    analytics.totalSessions++;
+    
+    // Track session start
+    analytics.sessionStart = new Date().toISOString();
+    
+    // Track visitor
+    trackVisitor();
+    
+    // Save analytics
+    saveAnalytics();
+    
+    // Track user interactions
+    trackUserInteractions();
+    
+    // Start visitor monitoring
+    startVisitorMonitoring();
+}
+
+function saveAnalytics() {
+    localStorage.setItem('hks-perspective-analytics', JSON.stringify(analytics));
+}
+
+function trackVisitor() {
+    const visitorId = generateVisitorId();
+    const now = Date.now();
+    
+    // Add visitor to current visitors
+    analytics.currentVisitors.push({
+        id: visitorId,
+        joinTime: now,
+        lastActivity: now
+    });
+    
+    // Update active visitor count
+    analytics.activeVisitors = analytics.currentVisitors.length;
+    
+    // Update peak visitors
+    if (analytics.activeVisitors > analytics.peakVisitors) {
+        analytics.peakVisitors = analytics.activeVisitors;
+    }
+    
+    // Add to visitor history
+    analytics.visitorHistory.push({
+        timestamp: now,
+        activeVisitors: analytics.activeVisitors,
+        action: 'join'
+    });
+    
+    // Add some sample data for demonstration if no history exists
+    if (analytics.visitorHistory.length === 1) {
+        // Add a few sample data points to show the graph
+        const sampleData = [
+            { timestamp: now - 300000, activeVisitors: 0, action: 'sample' },
+            { timestamp: now - 240000, activeVisitors: 1, action: 'sample' },
+            { timestamp: now - 180000, activeVisitors: 2, action: 'sample' },
+            { timestamp: now - 120000, activeVisitors: 1, action: 'sample' },
+            { timestamp: now - 60000, activeVisitors: 3, action: 'sample' }
+        ];
+        analytics.visitorHistory = [...sampleData, ...analytics.visitorHistory];
+    }
+    
+    // Keep only last 100 history entries
+    if (analytics.visitorHistory.length > 100) {
+        analytics.visitorHistory = analytics.visitorHistory.slice(-100);
+    }
+    
+    // Store visitor ID for this session
+    sessionStorage.setItem('hks-visitor-id', visitorId);
+    
+    saveAnalytics();
+}
+
+function generateVisitorId() {
+    return 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function startVisitorMonitoring() {
+    // Update visitor activity every 30 seconds
+    setInterval(updateVisitorActivity, 30000);
+    
+    // Clean up inactive visitors every 2 minutes
+    setInterval(cleanupInactiveVisitors, 120000);
+    
+    // Track page unload
+    window.addEventListener('beforeunload', handleVisitorLeave);
+}
+
+function updateVisitorActivity() {
+    const visitorId = sessionStorage.getItem('hks-visitor-id');
+    if (visitorId) {
+        const visitor = analytics.currentVisitors.find(v => v.id === visitorId);
+        if (visitor) {
+            visitor.lastActivity = Date.now();
+            saveAnalytics();
+        }
+    }
+}
+
+function cleanupInactiveVisitors() {
+    const now = Date.now();
+    const inactiveThreshold = 5 * 60 * 1000; // 5 minutes
+    
+    const activeVisitors = analytics.currentVisitors.filter(visitor => {
+        return (now - visitor.lastActivity) < inactiveThreshold;
+    });
+    
+    const removedCount = analytics.currentVisitors.length - activeVisitors.length;
+    
+    if (removedCount > 0) {
+        analytics.currentVisitors = activeVisitors;
+        analytics.activeVisitors = analytics.currentVisitors.length;
+        
+        // Add to visitor history
+        analytics.visitorHistory.push({
+            timestamp: now,
+            activeVisitors: analytics.activeVisitors,
+            action: 'cleanup',
+            removedCount: removedCount
+        });
+        
+        saveAnalytics();
+    }
+}
+
+function handleVisitorLeave() {
+    const visitorId = sessionStorage.getItem('hks-visitor-id');
+    if (visitorId) {
+        // Remove visitor from current visitors
+        analytics.currentVisitors = analytics.currentVisitors.filter(v => v.id !== visitorId);
+        analytics.activeVisitors = analytics.currentVisitors.length;
+        
+        // Add to visitor history
+        analytics.visitorHistory.push({
+            timestamp: Date.now(),
+            activeVisitors: analytics.activeVisitors,
+            action: 'leave'
+        });
+        
+        saveAnalytics();
+    }
+}
+
+function trackBlogView(category, blogId) {
+    const blogKey = `${category}-${blogId}`;
+    if (!analytics.blogViews[blogKey]) {
+        analytics.blogViews[blogKey] = {
+            views: 0,
+            title: '',
+            category: category,
+            firstViewed: new Date().toISOString(),
+            lastViewed: new Date().toISOString()
+        };
+    }
+    
+    analytics.blogViews[blogKey].views++;
+    analytics.blogViews[blogKey].lastViewed = new Date().toISOString();
+    
+    // Get blog title if available
+    const blog = blogs[category]?.find(b => b.id === blogId);
+    if (blog) {
+        analytics.blogViews[blogKey].title = blog.title;
+    }
+    
+    saveAnalytics();
+}
+
+function trackUserInteraction(action, details = {}) {
+    const interaction = {
+        timestamp: new Date().toISOString(),
+        action: action,
+        details: details,
+        userAgent: navigator.userAgent,
+        url: window.location.href
+    };
+    
+    analytics.userInteractions.push(interaction);
+    
+    // Keep only last 100 interactions to prevent storage bloat
+    if (analytics.userInteractions.length > 100) {
+        analytics.userInteractions = analytics.userInteractions.slice(-100);
+    }
+    
+    saveAnalytics();
+}
+
+function trackUserInteractions() {
+    // Track clicks on category cards
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const category = e.currentTarget.onclick.toString().match(/openPopup\('([^']+)'\)/)?.[1];
+            if (category) {
+                trackUserInteraction('category_click', { category: category });
+            }
+        });
+    });
+    
+    // Track blog post views
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('.btn-success') && e.target.textContent === 'View') {
+            const onclick = e.target.getAttribute('onclick');
+            const match = onclick.match(/viewBlog\('([^']+)',\s*(\d+)\)/);
+            if (match) {
+                const [, category, blogId] = match;
+                trackBlogView(category, parseInt(blogId));
+                trackUserInteraction('blog_view', { category: category, blogId: parseInt(blogId) });
+            }
+        }
+    });
+    
+    // Track form submissions
+    document.addEventListener('click', (e) => {
+        if (e.target.textContent === 'Save Blog') {
+            const onclick = e.target.getAttribute('onclick');
+            const match = onclick.match(/saveBlog\('([^']+)'\)/);
+            if (match) {
+                trackUserInteraction('blog_save', { category: match[1] });
+            }
+        }
+    });
+}
+
+function verifyOwner() {
+    // Check if user has valid owner session
+    const ownerSession = localStorage.getItem('hks-owner-session');
+    if (ownerSession) {
+        const sessionData = JSON.parse(ownerSession);
+        const now = Date.now();
+        
+        // Check if session is still valid (within timeout period)
+        if (now - sessionData.timestamp < OWNER_CONFIG.sessionTimeout) {
+            return true; // Valid session, allow access
+        } else {
+            // Session expired, remove it
+            localStorage.removeItem('hks-owner-session');
+        }
+    }
+    
+    // Method 1: Check for hidden owner element (most secure)
+    if (checkForOwnerElement()) {
+        // Create owner session
+        const sessionData = {
+            timestamp: Date.now(),
+            verified: true
+        };
+        localStorage.setItem('hks-owner-session', JSON.stringify(sessionData));
+        return true;
+    }
+    
+    // Method 2: Environment password verification (fallback)
+    const currentPassword = getOwnerPassword();
+    const ownerPassword = prompt("🔐 Enter owner password to access analytics:\n\nPassword: " + currentPassword);
+    if (!ownerPassword) {
+        return false;
+    }
+    
+    if (ownerPassword === currentPassword) {
+        // Create owner session
+        const sessionData = {
+            timestamp: Date.now(),
+            verified: true
+        };
+        localStorage.setItem('hks-owner-session', JSON.stringify(sessionData));
+        return true;
+    } else {
+        alert("❌ Access denied. Only the blog owner can view analytics.");
+        return false;
+    }
+}
+
+function showAnalytics() {
+    // Check if user is owner with multiple verification methods
+    if (!verifyOwner()) {
+        return;
+    }
+    
+    // Calculate some basic stats
+    const totalBlogViews = Object.values(analytics.blogViews).reduce((sum, blog) => sum + blog.views, 0);
+    const mostViewedBlog = Object.entries(analytics.blogViews)
+        .sort(([,a], [,b]) => b.views - a.views)[0];
+    
+    const recentInteractions = analytics.userInteractions.slice(-10);
+    
+    // Create analytics modal
+    const modal = document.createElement('div');
+    modal.className = 'analytics-modal';
+    modal.innerHTML = `
+        <div class="analytics-content">
+            <div class="analytics-header">
+                <h2>📊 Blog Analytics Dashboard</h2>
+                <button class="close-btn" onclick="closeAnalyticsModal()">&times;</button>
+            </div>
+            <div class="analytics-stats">
+                <div class="stat-card live-visitors">
+                    <h3 id="live-visitor-count">${analytics.activeVisitors}</h3>
+                    <p>Live Visitors</p>
+                    <div class="visitor-indicator">
+                        <div class="pulse-dot"></div>
+                        <span>Online Now</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>${analytics.peakVisitors}</h3>
+                    <p>Peak Visitors</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${analytics.pageViews}</h3>
+                    <p>Total Page Views</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${analytics.totalSessions}</h3>
+                    <p>Total Sessions</p>
+                </div>
+            </div>
+            <div class="visitor-graph-section">
+                <h3>📈 Live Visitor Activity</h3>
+                <div class="visitor-graph-container">
+                    <canvas id="visitor-graph" width="800" height="200"></canvas>
+                </div>
+                <div class="graph-controls">
+                    <button class="btn btn-small" onclick="updateVisitorGraph()">Refresh Graph</button>
+                    <span class="graph-info">Updates every 30 seconds</span>
+                </div>
+            </div>
+            <div class="analytics-sections">
+                <div class="analytics-section">
+                    <h3>Most Viewed Blogs</h3>
+                    <div class="blog-stats-list">
+                        ${Object.entries(analytics.blogViews)
+                            .sort(([,a], [,b]) => b.views - a.views)
+                            .slice(0, 5)
+                            .map(([key, blog]) => `
+                                <div class="blog-stat-item">
+                                    <span class="blog-title">${blog.title || 'Untitled'}</span>
+                                    <span class="blog-views">${blog.views} views</span>
+                                </div>
+                            `).join('')}
+                    </div>
+                </div>
+                <div class="analytics-section">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list">
+                        ${recentInteractions.map(interaction => `
+                            <div class="activity-item">
+                                <span class="activity-time">${new Date(interaction.timestamp).toLocaleString()}</span>
+                                <span class="activity-action">${interaction.action.replace('_', ' ')}</span>
+                                ${interaction.details.category ? `<span class="activity-details">(${interaction.details.category})</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            <div class="analytics-actions">
+                <button class="btn" onclick="exportAnalytics()">Export Data</button>
+                <button class="btn btn-danger" onclick="clearAnalytics()">Clear Analytics</button>
+                <button class="btn btn-secondary" onclick="logoutOwner(); closeAnalyticsModal();">Logout Owner</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Initialize the visitor graph
+    setTimeout(() => {
+        drawVisitorGraph();
+        startGraphUpdates();
+    }, 100);
+}
+
+function closeAnalyticsModal() {
+    const modal = document.querySelector('.analytics-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function exportAnalytics() {
+    const dataStr = JSON.stringify(analytics, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `blog-analytics-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+function clearAnalytics() {
+    if (confirm('Are you sure you want to clear all analytics data?')) {
+        analytics = {
+            pageViews: 0,
+            blogViews: {},
+            userInteractions: [],
+            sessionStart: new Date().toISOString(),
+            totalSessions: 0
+        };
+        saveAnalytics();
+        closeAnalyticsModal();
+        showAnalytics(); // Refresh the modal
+    }
+}
+
+function logoutOwner() {
+    localStorage.removeItem('hks-owner-session');
+    alert('✅ Owner session ended. You will need to re-enter the password next time.');
+}
+
+function drawVisitorGraph() {
+    const canvas = document.getElementById('visitor-graph');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Get recent visitor history (last 20 data points)
+    const recentHistory = analytics.visitorHistory.slice(-20);
+    
+    // Always draw the graph, even with no data
+    if (recentHistory.length === 0) {
+        // Draw empty graph with baseline
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(0, height / 2);
+        ctx.lineTo(width, height / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Draw empty state text
+        ctx.fillStyle = '#999';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Waiting for visitor data...', width / 2, height / 2 - 20);
+        ctx.fillText('Open multiple tabs to test!', width / 2, height / 2 + 10);
+        return;
+    }
+    
+    // Find max visitors for scaling
+    const maxVisitors = Math.max(...recentHistory.map(h => h.activeVisitors), 1);
+    
+    // Draw grid lines
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+        const y = (height / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+        
+        // Draw labels
+        ctx.fillStyle = '#999';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText(Math.round((maxVisitors / 5) * (5 - i)).toString(), -10, y + 4);
+    }
+    
+    // Draw visitor line
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    
+    recentHistory.forEach((point, index) => {
+        const x = (width / (recentHistory.length - 1)) * index;
+        const y = height - (point.activeVisitors / maxVisitors) * height;
+        
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    });
+    
+    ctx.stroke();
+    
+    // Draw data points
+    ctx.fillStyle = '#ffffff';
+    recentHistory.forEach((point, index) => {
+        const x = (width / (recentHistory.length - 1)) * index;
+        const y = height - (point.activeVisitors / maxVisitors) * height;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw visitor count on hover
+        if (index === recentHistory.length - 1) {
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(point.activeVisitors.toString(), x, y - 10);
+        }
+    });
+    
+    // Draw time labels
+    ctx.fillStyle = '#999';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    recentHistory.forEach((point, index) => {
+        if (index % 3 === 0) { // Show every 3rd label
+            const x = (width / (recentHistory.length - 1)) * index;
+            const time = new Date(point.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            ctx.fillText(time, x, height + 15);
+        }
+    });
+}
+
+function updateVisitorGraph() {
+    // Update live visitor count
+    const liveCountElement = document.getElementById('live-visitor-count');
+    if (liveCountElement) {
+        liveCountElement.textContent = analytics.activeVisitors;
+    }
+    
+    // Redraw graph
+    drawVisitorGraph();
+}
+
+function startGraphUpdates() {
+    // Update graph every 30 seconds
+    setInterval(() => {
+        if (document.querySelector('.analytics-modal')) {
+            updateVisitorGraph();
+        }
+    }, 30000);
+}
 
 // Load blogs from localStorage on page load
 function loadBlogs() {
@@ -208,7 +816,6 @@ In our next post, we'll dive deeper into Azure Identity Protection and how it wo
                     category: 'azure-integration'
                 }
             ],
-            'mvp-journey': [],
             'admin': []
         };
         saveBlogs();
@@ -632,6 +1239,7 @@ window.onload = function() {
     clearAllData();
     
     initTheme();
+    initAnalytics();
     loadBlogs();
     
     // Clean up duplicate blogs (keep only the first one) - but only if there are actual duplicates
